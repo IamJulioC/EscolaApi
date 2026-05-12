@@ -1,0 +1,37 @@
+﻿
+using EscolaApi.Domain.Entities;
+using EscolaApi.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EscolaApi.Infra.Data.Repositories
+{
+    internal class NotaRepository : INotaRepository
+    {
+        public Task<Nota> AddAsync(Nota nota)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Nota> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Nota>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Nota> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Nota> UpdateAsync(Nota nota)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

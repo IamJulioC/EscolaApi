@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EscolaApi.Domain.Interfaces
 {
-    internal interface ICursoRepository
+    public interface ICursoRepository
     {
         Task<Curso> GetByIdAsync(int id);
         Task<List<Curso>> GetAllAsync();
