@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EscolaApi.Infra.Data.Repositories
 {
-    internal class NotaRepository : INotaRepository
+    public class NotaRepository : INotaRepository
     {
         public Task<Nota> AddAsync(Nota nota)
         {

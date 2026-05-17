@@ -6,7 +6,7 @@ using System.Text;
 
 namespace EscolaApi.Infra.Data.Repositories
 {
-    internal class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         public Task<Usuario> AddAsync(Usuario usuario)
         {

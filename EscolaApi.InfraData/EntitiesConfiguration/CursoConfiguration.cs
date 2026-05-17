@@ -14,9 +14,9 @@ namespace EscolaApi.Infra.Data.EntitiesConfiguration
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Nome)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(80);
             builder.Property(c => c.Descricao)
-                .HasMaxLength(150);
+                .HasMaxLength(180);
         }
     }
 }

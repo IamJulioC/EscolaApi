@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EscolaApi.Infra.Data.Repositories
 {
-    internal class TurmaRepository : ITurmaRepository
+    public class TurmaRepository : ITurmaRepository
     {
         public Task<Turma> AddAsync(Turma turma)
         {
