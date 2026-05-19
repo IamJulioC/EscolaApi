@@ -13,5 +13,6 @@ namespace EscolaApi.Domain.Entities
 
         public ICollection<Matricula> Matriculas { get; set; }
         public Curso Curso { get; set; }
+        public bool Excluido { get; set; }
     }
 }

@@ -1,36 +1,58 @@
 ﻿using EscolaApi.Domain.Entities;
-using EscolaApi.Domain.Interfaces;  
+using EscolaApi.Domain.Interfaces;
+using EscolaApi.Infra.Data.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 
 namespace EscolaApi.Infra.Data.Repositories
 {
     public class MatriculaRepository : IMatriculaRepository
     {
-        public Task<Matricula> AddAsync(Matricula matricula)
+        private readonly ApplicationDbContext _context;
+        public MatriculaRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<Matricula> DeleteAsync(int id)
+        public async Task<Matricula> AddAsync(Matricula matricula)
         {
-            throw new NotImplementedException();
+            _context.Matricula.Add(matricula);
+            await _context.SaveChangesAsync();
+            return matricula;
         }
 
-        public Task<List<Matricula>> GetAllAsync()
+        public async Task<Matricula> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var matricula = await _context.Matricula.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
+            if (matricula == null)
+            {
+                return null;
+            }
+
+            matricula.Excluido = true;
+            _context.Matricula.Update(matricula);
+            await _context.SaveChangesAsync();
+            return matricula;
         }
 
-        public Task<Matricula> GetByIdAsync(int id)
+        public async Task<List<Matricula>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Matricula.Where(x => x.Excluido == false).ToListAsync();
         }
 
-        public Task<Matricula> UpdateAsync(Matricula matricula)
+        public async Task<Matricula> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Matricula.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Matricula> UpdateAsync(Matricula matricula)
+        {
+            _context.Matricula.Update(matricula);
+            await _context.SaveChangesAsync();
+            return matricula;
         }
     }
 }
