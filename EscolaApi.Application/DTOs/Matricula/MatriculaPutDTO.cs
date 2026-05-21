@@ -7,11 +7,11 @@ namespace EscolaApi.Application.DTOs.Matricula
 {
     public class MatriculaPutDTO
     {
-        [Required(ErrorMessage = "O campo Id é obrigatório.")]
+        [Required(ErrorMessage = "A matrícula é obrigatória.")]
         public int Id { get; set; }
-        [Required(ErrorMessage = "O campo TurmaId é obrigatório.")]
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
         public int TurmaId { get; set; }
-        [Required(ErrorMessage = "O campo Data de expiração é obrigatório.")]
+        [Required(ErrorMessage = "A data de expiração é obrigatória.")]
         public DateTime DataExpiracao { get; set; }
     }
 }

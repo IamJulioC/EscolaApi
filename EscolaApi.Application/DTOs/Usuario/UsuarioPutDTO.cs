@@ -5,17 +5,17 @@ using System.Text;
 
 namespace EscolaApi.Application.DTOs.Usuario
 {
-    internal class UsuarioPutDTO
+    public class UsuarioPutDTO
     {
-        [Required(ErrorMessage = "O campo Nome é obrigatório.")]
-        [MaxLength(250, ErrorMessage = "O campo Nome deve conter no máximo 250 caracteres.")]
+        [Required(ErrorMessage = "O campo nome é obrigatório.")]
+        [MaxLength(250, ErrorMessage = "O nome deve ter no máximo 250 caracteres.")]
         public string Nome { get; set; }
-        [Required(ErrorMessage = "O campo Email é obrigatório.")]
-        [MaxLength(200, ErrorMessage = "O campo Email deve conter no máximo 200 caracteres.")]
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [MaxLength(200, ErrorMessage = "O e-mail deve ter no máximo 200 caracteres.")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "O campo Senha é obrigatório.")]
-        [MinLength(8, ErrorMessage = "O campo Senha deve conter no mínimo 8 caracteres.")]
-        [MaxLength(250, ErrorMessage = "O campo Senha deve conter no máximo 250 caracteres.")]
+        [Required(ErrorMessage = "A senha é obrigatória.")]
+        [MinLength(8, ErrorMessage = "A senha deve ter no mínimo 8 caracteres.")]
+        [MaxLength(250, ErrorMessage = "A senha deve ter no máximo 250 caracteres.")]
         public string Senha { get; set; }
     }
 }
