@@ -1,4 +1,6 @@
-﻿using EscolaApi.Domain.Interfaces;
+﻿using EscolaApi.Application.Interfaces;
+using EscolaApi.Application.Services;
+using EscolaApi.Domain.Interfaces;
 using EscolaApi.Infra.Data.Context;
 using EscolaApi.Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,12 @@ namespace EscolaApi.Infra.Ioc
             services.AddScoped<INotaRepository, NotaRepository>();
             services.AddScoped<ITurmaRepository, TurmaRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+            services.AddScoped<ICursoService, CursoService>();
+            services.AddScoped<IMatriculaService, MatriculaService>();
+            services.AddScoped<INotaService, NotaService>();
+            services.AddScoped<ITurmaService, TurmaService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
 
 
             return services;
