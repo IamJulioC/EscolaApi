@@ -12,13 +12,21 @@ namespace EscolaApi.Application.Services
     public class TurmaService : ITurmaService
     {
         private readonly ITurmaRepository _turmaRepository;
-        public TurmaService(ITurmaRepository turmaRepository)
+        private readonly ICursoRepository _cursoRepository;
+        public TurmaService(ITurmaRepository turmaRepository, ICursoRepository cursoRepository)
         {
             _turmaRepository = turmaRepository;
+            _cursoRepository = cursoRepository;
         }
 
         public async Task<TurmaGetDTO> AddAsync(TurmaPostDTO turmaPostDTO)
         {
+            var curso = await _cursoRepository.GetByIdAsync(turmaPostDTO.CursoId);
+            if (curso == null)
+            {
+                throw new Exception($"Curso não encontrado.");
+            }
+
             var turma = new Turma
             {
                 Nome = turmaPostDTO.Nome,

@@ -48,7 +48,7 @@ namespace EscolaApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetTurma(int id)
+        public async Task<ActionResult> GetTurmaById(int id)
         {
             var turma = await _turmaService.GetByIdAsync(id);
             if (turma == null)
