@@ -6,6 +6,7 @@ using EscolaApi.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EscolaApi.Application.Exceptions;
 
 namespace EscolaApi.Application.Services
 {
@@ -24,7 +25,7 @@ namespace EscolaApi.Application.Services
             var curso = await _cursoRepository.GetByIdAsync(turmaPostDTO.CursoId);
             if (curso == null)
             {
-                throw new Exception($"Curso não encontrado.");
+                throw new NotFoundException("Curso não encontrado.");
             }
 
             var turma = new Turma
@@ -80,7 +81,7 @@ namespace EscolaApi.Application.Services
         {
             var turma = await _turmaRepository.GetByIdAsync(id);
             if (turma == null)
-                return null;
+                throw new NotFoundException("Turma não encontrada.");
             return new TurmaGetDetailDTO
             {
                 Id = turma.Id,
@@ -97,6 +98,12 @@ namespace EscolaApi.Application.Services
 
         public async Task<TurmaGetDTO> UpdateAsync(TurmaPutDTO turmaPutDTO)
         {
+            var curso = await _cursoRepository.GetByIdAsync(turmaPutDTO.CursoId);
+            if (curso == null)
+            {
+                throw new NotFoundException("Curso não encontrado.");
+            }
+
             var turma = new Turma
             {
                 Id = turmaPutDTO.Id,
