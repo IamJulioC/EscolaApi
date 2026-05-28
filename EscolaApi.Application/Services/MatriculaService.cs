@@ -1,6 +1,7 @@
 ﻿using EscolaApi.Application.DTOs.Matricula;
 using EscolaApi.Application.DTOs.Turma;
 using EscolaApi.Application.DTOs.Usuario;
+using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
@@ -13,13 +14,22 @@ namespace EscolaApi.Application.Services
     public class MatriculaService : IMatriculaService
     {
         private readonly IMatriculaRepository _matriculaRepository;
-        public MatriculaService(IMatriculaRepository matriculaRepository)
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ITurmaRepository _turmaRepository;
+        public MatriculaService(IMatriculaRepository matriculaRepository, IUsuarioRepository usuarioRepository, ITurmaRepository turmaRepository)
         {
             _matriculaRepository = matriculaRepository;
+            _usuarioRepository = usuarioRepository;
+            _turmaRepository = turmaRepository;
         }
 
         public async Task<MatriculaGetDTO> AddAsync(MatriculaPostDTO matriculaPostDTO)
         {
+            if(await _usuarioRepository.GetByIdAsync(matriculaPostDTO.UsuarioId) == null)
+                throw new NotFoundException($"Usuário não encontrado.");
+            if (await _turmaRepository.GetByIdAsync(matriculaPostDTO.TurmaId) == null)
+                throw new NotFoundException($"Turma não encontrada.");
+
             var matricula = new Matricula
             {
                 UsuarioId = matriculaPostDTO.UsuarioId,
@@ -28,6 +38,7 @@ namespace EscolaApi.Application.Services
                 DataExpiracao = matriculaPostDTO.DataExpiracao,
                 Ativa = true
             };
+
             var createdMatricula = await _matriculaRepository.AddAsync(matricula);
             return new MatriculaGetDTO
             {
@@ -44,7 +55,7 @@ namespace EscolaApi.Application.Services
         {
             var deletedMatricula = await _matriculaRepository.DeleteAsync(id);
             if (deletedMatricula == null)
-                return null;
+                throw new NotFoundException($"Matrícula não encontrada.");
             return new MatriculaGetDTO
             {
                 Id = deletedMatricula.Id,
@@ -86,7 +97,7 @@ namespace EscolaApi.Application.Services
         {
             var matricula = await _matriculaRepository.GetByIdAsync(id);
             if (matricula == null)
-                return null;
+                throw new NotFoundException($"Matrícula não encontrada.");
             return new MatriculaGetDetailDTO
             {
                 Id = matricula.Id,
@@ -110,6 +121,11 @@ namespace EscolaApi.Application.Services
 
         public async Task<MatriculaGetDTO> UpdateAsync(MatriculaPutDTO matriculaPutDTO)
         {
+            if (await _turmaRepository.GetByIdAsync(matriculaPutDTO.TurmaId) == null)
+                throw new NotFoundException($"Turma não encontrada.");
+            if (await _matriculaRepository.GetByIdAsync(matriculaPutDTO.Id) == null)
+                throw new NotFoundException($"Matrícula não encontrada.");
+
             var matricula = new Matricula
             {
                 Id = matriculaPutDTO.Id,

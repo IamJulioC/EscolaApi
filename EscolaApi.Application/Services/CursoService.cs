@@ -1,4 +1,5 @@
 ﻿using EscolaApi.Application.DTOs.Curso;
+using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
@@ -36,7 +37,7 @@ namespace EscolaApi.Application.Services
         {
             var deletedCurso = await _cursoRepository.DeleteAsync(id);
             if (deletedCurso == null)
-                return null;
+                throw new NotFoundException("Curso não encontrado.");
             return new CursoGetDTO
             {
                 Id = deletedCurso.Id,
@@ -62,7 +63,7 @@ namespace EscolaApi.Application.Services
         {
             var curso = await _cursoRepository.GetByIdAsync(id);
             if (curso == null)
-                return null;
+                throw new NotFoundException("Curso não encontrado.");
             return new CursoGetDTO
             {
                 Id = curso.Id,
@@ -73,15 +74,14 @@ namespace EscolaApi.Application.Services
 
         public async Task<CursoGetDTO> UpdateAsync(CursoPutDTO cursoPutDTO)
         {
-            var curso = new Curso
-            {
-                Id = cursoPutDTO.Id,
-                Nome = cursoPutDTO.Nome,
-                Descricao = cursoPutDTO.Descricao
-            };
+            var curso = await _cursoRepository.GetByIdAsync(cursoPutDTO.Id);
+            if (curso == null)
+                throw new NotFoundException("Curso não encontrado.");
+
+            curso.Nome = cursoPutDTO.Nome;
+            curso.Descricao = cursoPutDTO.Descricao;
+
             var updatedCurso = await _cursoRepository.UpdateAsync(curso);
-            if (updatedCurso == null)
-                return null;
             return new CursoGetDTO
             {
                 Id = updatedCurso.Id,

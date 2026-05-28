@@ -1,12 +1,12 @@
 ﻿using EscolaApi.Application.DTOs.Turma;
 using EscolaApi.Application.DTOs.Curso;
+using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using EscolaApi.Application.Exceptions;
 
 namespace EscolaApi.Application.Services
 {
@@ -48,7 +48,7 @@ namespace EscolaApi.Application.Services
         {
             var deletedTurma = await _turmaRepository.DeleteAsync(id);
             if (deletedTurma == null)
-                return null;
+                throw new NotFoundException("Turma não encontrada.");
             return new TurmaGetDTO
             {
                 Id = deletedTurma.Id,
@@ -98,19 +98,23 @@ namespace EscolaApi.Application.Services
 
         public async Task<TurmaGetDTO> UpdateAsync(TurmaPutDTO turmaPutDTO)
         {
+            var turma = await _turmaRepository.GetByIdAsync(turmaPutDTO.Id);
+            if (turma == null)
+            {
+                throw new NotFoundException("Turma não encontrada.");
+            }
+
             var curso = await _cursoRepository.GetByIdAsync(turmaPutDTO.CursoId);
             if (curso == null)
             {
                 throw new NotFoundException("Curso não encontrado.");
             }
 
-            var turma = new Turma
-            {
-                Id = turmaPutDTO.Id,
-                Nome = turmaPutDTO.Nome,
-                Descricao = turmaPutDTO.Descricao,
-                CursoId = turmaPutDTO.CursoId
-            };
+            turma.Id = curso.Id;
+            turma.Nome = turmaPutDTO.Nome;
+            turma.Descricao = turmaPutDTO.Descricao;
+            turma.CursoId = turmaPutDTO.CursoId;
+
             var updatedTurma = await _turmaRepository.UpdateAsync(turma);
             if (updatedTurma == null)
                 return null;

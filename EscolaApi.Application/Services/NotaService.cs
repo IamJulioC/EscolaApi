@@ -1,4 +1,5 @@
 ﻿using EscolaApi.Application.DTOs.Nota;
+using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
@@ -11,13 +12,18 @@ namespace EscolaApi.Application.Services
     public class NotaService : INotaService
     {
         private readonly INotaRepository _notaRepository;
-        public NotaService(INotaRepository notaRepository)
+        private readonly IMatriculaRepository _matriculaRepository;
+        public NotaService(INotaRepository notaRepository, IMatriculaRepository matriculaRepository)
         {
             _notaRepository = notaRepository;
+            _matriculaRepository = matriculaRepository;
         }
 
         public async Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO)
         {
+            if (await _matriculaRepository.GetByIdAsync(notaPostDTO.MatriculaId) == null)
+                throw new NotFoundException($"Matrícula não encontrada.");
+
             var nota = new Nota
             {
                 MatriculaId = notaPostDTO.MatriculaId,
@@ -25,6 +31,7 @@ namespace EscolaApi.Application.Services
                 Aprovado = notaPostDTO.ValorNota >= 60, // Exemplo de lógica para aprovação
                 DataNota = DateTime.Now
             };
+
             var createdNota = await _notaRepository.AddAsync(nota);
             return new NotaGetDTO
             {
@@ -40,7 +47,7 @@ namespace EscolaApi.Application.Services
         {
             var deletedNota = await _notaRepository.DeleteAsync(id);
             if (deletedNota == null)
-                return null;
+                throw new NotFoundException($"Matrícula não encontrada.");
             return new NotaGetDTO
             {
                 Id = deletedNota.Id,
@@ -73,7 +80,7 @@ namespace EscolaApi.Application.Services
         {
             var nota = await _notaRepository.GetByIdAsync(id);
             if (nota == null)
-                return null;
+                throw new NotFoundException($"Matrícula não encontrada.");
             return new NotaGetDTO
             {
                 Id = nota.Id,
@@ -88,7 +95,14 @@ namespace EscolaApi.Application.Services
         {
             var existingNota = await _notaRepository.GetByIdAsync(notaPutDTO.Id);
             if (existingNota == null)
-                return null;
+                throw new NotFoundException($"Nota não encontrada.");
+
+            if (notaPutDTO.MatriculaId != existingNota.MatriculaId)
+            {
+                if (await _matriculaRepository.GetByIdAsync(notaPutDTO.MatriculaId) == null)
+                    throw new NotFoundException($"Matrícula não encontrada.");
+                existingNota.MatriculaId = notaPutDTO.MatriculaId;
+            }
 
             existingNota.ValorNota = notaPutDTO.ValorNota;
             existingNota.Aprovado = notaPutDTO.ValorNota >= 60; // Exemplo de lógica para aprovação
