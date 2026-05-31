@@ -40,7 +40,8 @@ namespace EscolaApi.Application.Services
             {
                 Id = createdUsuario.Id,
                 Nome = createdUsuario.Nome,
-                Email = createdUsuario.Email
+                Email = createdUsuario.Email,
+                Perfil = createdUsuario.Perfil
             };
         }
 
@@ -53,7 +54,8 @@ namespace EscolaApi.Application.Services
             {
                 Id = deletedUsuario.Id,
                 Nome = deletedUsuario.Nome,
-                Email = deletedUsuario.Email
+                Email = deletedUsuario.Email,
+                Perfil = deletedUsuario.Perfil
             };
         }
 
@@ -70,7 +72,8 @@ namespace EscolaApi.Application.Services
             {
                 Id = u.Id,
                 Nome = u.Nome,
-                Email = u.Email
+                Email = u.Email,
+                Perfil = u.Perfil,
             }));
             return usuarioDTOs;
         }
@@ -84,7 +87,8 @@ namespace EscolaApi.Application.Services
             {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
-                Email = usuario.Email
+                Email = usuario.Email,
+                Perfil = usuario.Perfil
             };
         }
 
@@ -100,7 +104,8 @@ namespace EscolaApi.Application.Services
             {
                 Id = updatedUsuario.Id,
                 Nome = updatedUsuario.Nome,
-                Email = updatedUsuario.Email
+                Email = updatedUsuario.Email,
+                Perfil = updatedUsuario.Perfil
             };
         }
     }

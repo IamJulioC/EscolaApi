@@ -1,7 +1,9 @@
 ﻿using EscolaApi.Application.Interfaces;
 using EscolaApi.Application.Services;
+using EscolaApi.Domain.Account;
 using EscolaApi.Domain.Interfaces;
 using EscolaApi.Infra.Data.Context;
+using EscolaApi.Infra.Data.Identity;
 using EscolaApi.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +58,7 @@ namespace EscolaApi.Infra.Ioc
             services.AddScoped<INotaService, NotaService>();
             services.AddScoped<ITurmaService, TurmaService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IAuthenticate, AuthenticateService>();
 
 
             return services;
