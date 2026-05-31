@@ -23,7 +23,7 @@ namespace EscolaApi.Controllers
         {
             var usuario = await _usuarioService.AddAsync(usuarioPostDTO);
             var token = _authenticate.GenerateToken(usuario.Id, usuario.Email.ToLower(), usuario.Perfil);
-            return Ok(new { Nome = usuario.Nome, Token = token });
+            return Ok(new { nome = usuario.Nome, token = token });
         }
     }
 }

@@ -20,7 +20,6 @@ namespace EscolaApi.Infra.Data.Identity
             _context = context;
             _configuration = configuration;
         }
-
         public string GenerateToken(int id, string email, string role)
         {
             var claims = new[]

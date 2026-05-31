@@ -23,7 +23,7 @@ namespace EscolaApi.Application.Services
             byte[] passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(usuarioPostDTO.Senha));
             byte[] passwordSalt = hmac.Key;
 
-            var existingUsuario = await _usuarioRepository.ExisteUsuarioAsync();
+            var existeUsuario = await _usuarioRepository.ExisteUsuarioAsync();
 
             var usuario = new Usuario
             {
@@ -32,7 +32,7 @@ namespace EscolaApi.Application.Services
                 Excluido = false,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Perfil = existingUsuario ? "Aluno" : "Administrador"
+                Perfil = existeUsuario ? "Aluno" : "Administrador"
             };
 
             var createdUsuario = await _usuarioRepository.AddAsync(usuario);
