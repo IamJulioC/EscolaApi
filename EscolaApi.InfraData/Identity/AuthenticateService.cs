@@ -8,6 +8,8 @@ using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace EscolaApi.Infra.Data.Identity
 {
@@ -20,6 +22,24 @@ namespace EscolaApi.Infra.Data.Identity
             _context = context;
             _configuration = configuration;
         }
+
+        public async Task<bool> AuthenticateAsync(string email, string senha)
+        {
+            var usuario =  await _context.Usuario.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower() && u.Excluido == false);
+            if(usuario == null || usuario.Excluido)
+                return false;
+
+            using var hmac = new HMACSHA512(usuario.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(senha));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != usuario.PasswordHash[i])
+                    return false;
+            }
+
+            return true;
+        }
+
         public string GenerateToken(int id, string email, string role)
         {
             var claims = new[]
@@ -44,14 +64,14 @@ namespace EscolaApi.Infra.Data.Identity
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public Task<Usuario> GetUsuarioByEmail(string email)
+        public async Task<Usuario> GetUsuarioByEmail(string email)
         {
-            throw new NotImplementedException();
+            return await _context.Usuario.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower() && u.Excluido == false);
         }
 
         public Task<bool> UserExists(string email)
         {
-            throw new NotImplementedException();
+            return _context.Usuario.AnyAsync(u => u.Email.ToLower() == email.ToLower() && u.Excluido == false);
         }
     }
 }
