@@ -1,5 +1,6 @@
 ﻿using EscolaApi.Application.DTOs.Nota;
 using EscolaApi.Application.Interfaces;
+using EscolaApi.Infra.Ioc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,6 @@ namespace EscolaApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Administrador")]
     public class NotaController : Controller
     {
         private readonly INotaService _notaService;
@@ -18,6 +18,7 @@ namespace EscolaApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> CreateNota(NotaPostDTO notaPostDTO)
         {
             var createdNota = await _notaService.AddAsync(notaPostDTO);
@@ -29,6 +30,7 @@ namespace EscolaApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Administrador")]
 
         public async Task<ActionResult> UpdateNota(NotaPutDTO notaPutDTO)
         {
@@ -41,6 +43,7 @@ namespace EscolaApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> DeleteNota(int id)
         {
             var deletedNota = await _notaService.DeleteAsync(id);
@@ -52,6 +55,7 @@ namespace EscolaApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetNotaById(int id)
         {
             var nota = await _notaService.GetByIdAsync(id);
@@ -63,9 +67,20 @@ namespace EscolaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> GetAllNotas()
         {
             var notas = await _notaService.GetAllAsync();
+            return Ok(notas);
+        }
+
+
+        [HttpGet("user/turma/{id}")]
+        [Authorize(Roles = "Aluno, Administrador")]
+        public async Task<ActionResult> GetAllNotasByTurmaUsuario(int id)
+        {
+            var userId = User.GetUserId();
+            var notas = await _notaService.GetNotasByTurmaUsuario(id, userId);
             return Ok(notas);
         }
 
