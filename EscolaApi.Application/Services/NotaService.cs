@@ -29,7 +29,7 @@ namespace EscolaApi.Application.Services
                 MatriculaId = notaPostDTO.MatriculaId,
                 ValorNota = notaPostDTO.ValorNota,
                 Aprovado = notaPostDTO.ValorNota >= 60, // Exemplo de lógica para aprovação
-                DataNota = DateTime.Now
+                DataNota = DateTime.UtcNow
             };
 
             var createdNota = await _notaRepository.AddAsync(nota);
