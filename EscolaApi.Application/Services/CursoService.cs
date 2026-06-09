@@ -3,6 +3,7 @@ using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,9 +47,9 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<CursoGetDTO>> GetAllAsync()
+        public async Task<PagedList<CursoGetDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var cursos = await _cursoRepository.GetAllAsync();
+            var cursos = await _cursoRepository.GetAllAsync(pageNumber, pageSize);
             var cursoGetDTOs = new List<CursoGetDTO>();
             cursoGetDTOs.AddRange(cursos.Select(curso => new CursoGetDTO
             {
@@ -56,7 +57,7 @@ namespace EscolaApi.Application.Services
                 Nome = curso.Nome,
                 Descricao = curso.Descricao
             }));
-            return cursoGetDTOs;
+            return new PagedList<CursoGetDTO>(cursoGetDTOs, cursos.CurrentPage, cursos.PageSize, cursos.TotalCount);
         }
 
         public async Task<CursoGetDTO> GetByIdAsync(int id)
