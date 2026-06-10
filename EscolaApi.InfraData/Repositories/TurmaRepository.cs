@@ -1,7 +1,9 @@
 ﻿
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using EscolaApi.Infra.Data.Context;
+using EscolaApi.Infra.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -38,9 +40,10 @@ namespace EscolaApi.Infra.Data.Repositories
             return turma;
         }
 
-        public async Task<List<Turma>> GetAllAsync()
+        public async Task<PagedList<Turma>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Turma.Include(x => x.Curso).Where(x => x.Excluido == false).ToListAsync();
+            var query = _context.Turma.Include(x => x.Curso).Where(x => x.Excluido == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Turma> GetByIdAsync(int id)
@@ -48,12 +51,13 @@ namespace EscolaApi.Infra.Data.Repositories
             return await _context.Turma.Include(x=> x.Curso).Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Turma>> GetTurmasByUsuario(int idUsuario)
+        public async Task<PagedList<Turma>> GetTurmasByUsuario(int idUsuario, int pageNumber, int pageSize)
         {
-            return await _context.Turma
+            var query = _context.Turma
                 .Include(t => t.Curso)
                 .Where(t => t.Excluido == false && t.Matriculas.Any(m => m.UsuarioId == idUsuario))
-                .ToListAsync();
+                .AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Turma> UpdateAsync(Turma turma)

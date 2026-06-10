@@ -5,6 +5,7 @@ using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,9 +68,9 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<MatriculaGetDetailDTO>> GetAllAsync()
+        public async Task<PagedList<MatriculaGetDetailDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var matriculas = await _matriculaRepository.GetAllAsync();
+            var matriculas = await _matriculaRepository.GetAllAsync(pageNumber, pageSize);
             var matriculaGetDetailDTOs = new List<MatriculaGetDetailDTO>();
             matriculaGetDetailDTOs.AddRange(matriculas.Select(matricula => new MatriculaGetDetailDTO
             {
@@ -89,8 +90,8 @@ namespace EscolaApi.Application.Services
                     Nome = matricula.Turma.Nome,
                     Descricao = matricula.Turma.Descricao
                 }
-            }));
-            return matriculaGetDetailDTOs;
+            }).ToList());
+            return new PagedList<MatriculaGetDetailDTO>(matriculaGetDetailDTOs, matriculas.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<MatriculaGetDetailDTO> GetByIdAsync(int id)

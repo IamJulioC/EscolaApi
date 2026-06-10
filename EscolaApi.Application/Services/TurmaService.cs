@@ -7,6 +7,7 @@ using EscolaApi.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EscolaApi.Domain.Pagination;
 
 namespace EscolaApi.Application.Services
 {
@@ -60,9 +61,9 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<TurmaGetDetailDTO>> GetAllAsync()
+        public async Task<PagedList<TurmaGetDetailDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var turmas = await _turmaRepository.GetAllAsync();
+            var turmas = await _turmaRepository.GetAllAsync(pageNumber, pageSize);
             var turmaGetDetailDTO = new List<TurmaGetDetailDTO>();
             turmaGetDetailDTO.AddRange(turmas.Select(turma => new TurmaGetDetailDTO
             {
@@ -75,8 +76,8 @@ namespace EscolaApi.Application.Services
                     Nome = turma.Curso.Nome,
                     Descricao = turma.Curso.Descricao
                 }
-            }));
-            return turmaGetDetailDTO;
+            }).ToList());
+            return new PagedList<TurmaGetDetailDTO>(turmaGetDetailDTO, turmas.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<TurmaGetDetailDTO> GetByIdAsync(int id)
@@ -98,13 +99,13 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<TurmaGetDetailDTO>> GetTurmasByUsuario(int idUsuario)
+        public async Task<PagedList<TurmaGetDetailDTO>> GetTurmasByUsuario(int pageNumber, int pageSize, int idUsuario)
         {
             var usuario = await _usuarioRepository.GetByIdAsync(idUsuario);
             if (usuario == null)
                 throw new NotFoundException("Usuário não encontrado.");
 
-            var turmas = await _turmaRepository.GetTurmasByUsuario(idUsuario);
+            var turmas = await _turmaRepository.GetTurmasByUsuario(pageNumber, pageSize, idUsuario);
             var turmaGetDetailDTO = new List<TurmaGetDetailDTO>();
             turmaGetDetailDTO.AddRange(turmas.Select(turma => new TurmaGetDetailDTO
             {
@@ -117,8 +118,8 @@ namespace EscolaApi.Application.Services
                     Nome = turma.Curso.Nome,
                     Descricao = turma.Curso.Descricao
                 }
-            }));
-            return turmaGetDetailDTO;
+            }).ToList());
+            return new PagedList<TurmaGetDetailDTO>(turmaGetDetailDTO, turmas.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<TurmaGetDTO> UpdateAsync(TurmaPutDTO turmaPutDTO)

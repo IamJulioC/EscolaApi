@@ -1,7 +1,9 @@
 ﻿
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using EscolaApi.Infra.Data.Context;
+using EscolaApi.Infra.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -36,9 +38,10 @@ namespace EscolaApi.Infra.Data.Repositories
             return nota;
         }
 
-        public async Task<List<Nota>> GetAllAsync()
+        public async Task<PagedList<Nota>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Nota.Where(x => x.Excluido == false).ToListAsync();
+            var query = _context.Nota.Where(x => x.Excluido == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Nota> GetByIdAsync(int id)
@@ -46,9 +49,10 @@ namespace EscolaApi.Infra.Data.Repositories
             return await _context.Nota.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Nota>> GetNotasByTurmaUsuario(int idTurma, int idUsuario)
+        public async Task<PagedList<Nota>> GetNotasByTurmaUsuario(int idTurma, int idUsuario, int pageNumber, int pageSize)
         {
-            return await _context.Nota.Where(x => x.Excluido == false && x.Matricula.TurmaId == idTurma && x.Matricula.UsuarioId == idUsuario).ToListAsync();
+            var query = _context.Nota.Where(x => x.Excluido == false && x.Matricula.TurmaId == idTurma && x.Matricula.UsuarioId == idUsuario).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Nota> UpdateAsync(Nota nota)

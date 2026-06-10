@@ -1,6 +1,8 @@
 ﻿using EscolaApi.Application.DTOs.Nota;
 using EscolaApi.Application.Interfaces;
+using EscolaApi.Extensions;
 using EscolaApi.Infra.Ioc;
+using EscolaApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,19 +70,23 @@ namespace EscolaApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public async Task<ActionResult> GetAllNotas()
+        public async Task<ActionResult> GetAllNotas([FromQuery] PaginationParams paginationParams)
         {
-            var notas = await _notaService.GetAllAsync();
+            var notas = await _notaService.GetAllAsync(paginationParams.PageNumber, paginationParams.PageSize);
+
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, notas.TotalCount, notas.TotalPages));
             return Ok(notas);
         }
 
 
         [HttpGet("user/turma/{id}")]
         [Authorize(Roles = "Aluno, Administrador")]
-        public async Task<ActionResult> GetAllNotasByTurmaUsuario(int id)
+        public async Task<ActionResult> GetAllNotasByTurmaUsuario([FromQuery] PaginationParams paginationParams, int id)
         {
             var userId = User.GetUserId();
-            var notas = await _notaService.GetNotasByTurmaUsuario(id, userId);
+            var notas = await _notaService.GetNotasByTurmaUsuario(paginationParams.PageNumber, paginationParams.PageSize, id, userId);
+
+            Response.AddPaginationHeader(new PaginationHeader(paginationParams.PageNumber, paginationParams.PageSize, notas.TotalCount, notas.TotalPages));
             return Ok(notas);
         }
 

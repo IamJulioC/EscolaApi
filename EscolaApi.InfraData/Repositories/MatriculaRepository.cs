@@ -1,6 +1,8 @@
 ﻿using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using EscolaApi.Infra.Data.Context;
+using EscolaApi.Infra.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -38,9 +40,10 @@ namespace EscolaApi.Infra.Data.Repositories
             return matricula;
         }
 
-        public async Task<List<Matricula>> GetAllAsync()
+        public async Task<PagedList<Matricula>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Matricula.Include(x => x.Usuario).Include(x=> x.Turma).Where(x => x.Excluido == false).ToListAsync();
+            var query = _context.Matricula.Include(x => x.Usuario).Include(x => x.Turma).Where(x => x.Excluido == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Matricula> GetByIdAsync(int id)

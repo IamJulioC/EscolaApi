@@ -3,6 +3,7 @@ using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
+using EscolaApi.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -58,9 +59,9 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<NotaGetDTO>> GetAllAsync()
+        public async Task<PagedList<NotaGetDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var notas = await _notaRepository.GetAllAsync();
+            var notas = await _notaRepository.GetAllAsync(pageNumber, pageSize);
             var notaDTOs = new List<NotaGetDTO>();
             foreach (var nota in notas)
             {
@@ -73,7 +74,7 @@ namespace EscolaApi.Application.Services
                     DataNota = nota.DataNota
                 });
             }
-            return notaDTOs;
+            return new PagedList<NotaGetDTO>(notaDTOs, notas.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<NotaGetDTO> GetByIdAsync(int id)
@@ -91,9 +92,9 @@ namespace EscolaApi.Application.Services
             };
         }
 
-        public async Task<List<NotaGetDTO>> GetNotasByTurmaUsuario(int idTurma, int idUsuario)
+        public async Task<PagedList<NotaGetDTO>> GetNotasByTurmaUsuario(int idTurma, int idUsuario, int pageNumber, int pageSize)
         {
-            var notas = await _notaRepository.GetNotasByTurmaUsuario(idTurma, idUsuario);
+            var notas = await _notaRepository.GetNotasByTurmaUsuario(idTurma, idUsuario, pageNumber, pageSize);
             var notaDTOs = new List<NotaGetDTO>();
             foreach (var nota in notas)
             {
@@ -106,7 +107,7 @@ namespace EscolaApi.Application.Services
                     DataNota = nota.DataNota
                 });
             }
-            return notaDTOs;
+            return new PagedList<NotaGetDTO>(notaDTOs, notas.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO)
