@@ -55,7 +55,7 @@ namespace EscolaApi.Infra.Data.Repositories
         {
             var query = _context.Turma
                 .Include(t => t.Curso)
-                .Where(t => t.Excluido == false && t.Matriculas.Any(m => m.UsuarioId == idUsuario))
+                .Where(t => t.Excluido == false && t.Matriculas.Any(m => m.UsuarioId == idUsuario && m.Excluido == false && m.Ativa == true))
                 .AsNoTracking();
             return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
