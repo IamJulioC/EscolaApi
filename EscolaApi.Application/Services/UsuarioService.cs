@@ -1,4 +1,5 @@
 ﻿using EscolaApi.Application.DTOs.Usuario;
+using EscolaApi.Application.Exceptions;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Entities;
 using EscolaApi.Domain.Interfaces;
@@ -20,6 +21,11 @@ namespace EscolaApi.Application.Services
 
         public async Task<UsuarioGetDTO> AddAsync(UsuarioPostDTO usuarioPostDTO)
         {
+            var usuarioExistente = await _usuarioRepository.UserExists(usuarioPostDTO.Email);
+
+            if (usuarioExistente)
+                throw new BadRequestException("Já existe um usuário com este email.");
+
             using var hmac = new HMACSHA512();
             byte[] passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(usuarioPostDTO.Senha));
             byte[] passwordSalt = hmac.Key;
@@ -50,7 +56,7 @@ namespace EscolaApi.Application.Services
         {
             var deletedUsuario = await _usuarioRepository.DeleteAsync(id);
             if (deletedUsuario == null)
-                return null;
+                throw new NotFoundException("Usuário não encontrado.");
             return new UsuarioGetDTO
             {
                 Id = deletedUsuario.Id,
@@ -83,7 +89,7 @@ namespace EscolaApi.Application.Services
         {
             var usuario = await _usuarioRepository.GetByIdAsync(id);
             if (usuario == null)
-                return null;
+                throw new NotFoundException("Usuário não encontrado.");
             return new UsuarioGetDTO
             {
                 Id = usuario.Id,
@@ -93,11 +99,25 @@ namespace EscolaApi.Application.Services
             };
         }
 
+        public async Task<UsuarioGetDTO> GetUsuarioByEmail(string email)
+        {
+            var usuario = await _usuarioRepository.GetUsuarioByEmail(email);
+            if (usuario == null)
+                throw new NotFoundException("Usuário não encontrado.");
+            return new UsuarioGetDTO
+            {
+                Id = usuario.Id,
+                Nome= usuario.Nome,
+                Email = usuario.Email,
+                Perfil = usuario.Perfil
+            };
+        }
+
         public async Task<UsuarioGetDTO> UpdateAsync(int usuarioId, UsuarioPutDTO usuarioPutDTO)
         {
             var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
             if (usuario == null)
-                return null;
+                throw new NotFoundException("Usuário não encontrado.");
             usuario.Nome = usuarioPutDTO.Nome;
             usuario.Email = usuarioPutDTO.Email;
             var updatedUsuario = await _usuarioRepository.UpdateAsync(usuario);

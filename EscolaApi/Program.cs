@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "JWT Authorization header using the Bearer scheme"
     });
 
-    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement 
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
         [new OpenApiSecuritySchemeReference("bearer", document)] = []
     });
