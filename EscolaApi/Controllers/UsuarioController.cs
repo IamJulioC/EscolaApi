@@ -1,6 +1,7 @@
 ﻿using EscolaApi.Application.DTOs.Usuario;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Account;
+using EscolaApi.Infra.Ioc;
 using EscolaApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,11 +30,20 @@ namespace EscolaApi.Controllers
 
         [HttpPost("login")]
         public async Task<ActionResult> GetTokenUsuario(UserLogin userLogin)
-        {            
+        {
             var usuario = await _authenticate.AuthenticateAsync(userLogin.Email, userLogin.Senha);
 
             var token = _authenticate.GenerateToken(usuario.Id, usuario.Email.ToLower(), usuario.Perfil);
             return Ok(new { Nome = usuario.Nome, Token = token });
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> UpdateUsuario(UsuarioPutDTO usuarioPutDTO)
+        {
+            await _usuarioService.UpdateAsync(User.GetUserId(),usuarioPutDTO);
+            return Ok(new {message = "Usuário atualizado com sucesso!"});
+
         }
     }
 }
