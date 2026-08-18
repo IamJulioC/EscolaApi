@@ -7,7 +7,6 @@ namespace EscolaApi.Domain.Account
 {
     public interface IAuthenticate
     {
-        string GenerateToken(int id, string email, string role);
-        
+        string GenerateToken(int id, string email, string role);        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EscolaApi.Application.DTOs.Usuario;
 using EscolaApi.Application.Interfaces;
 using EscolaApi.Domain.Account;
+using EscolaApi.Extensions;
 using EscolaApi.Infra.Ioc;
 using EscolaApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,18 @@ namespace EscolaApi.Controllers
             var usuario = await _usuarioService.AddAsync(usuarioPostDTO);
             var token = _authenticate.GenerateToken(usuario.Id, usuario.Email.ToLower(), usuario.Perfil);
             return Ok(new { Nome = usuario.Nome, Token = token });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<ActionResult> GetUsuarios([FromQuery] PaginationParams paginationParams)
+        {
+            var usuarios = await _usuarioService.GetAllAsync(paginationParams.PageNumber, paginationParams.PageSize);
+
+            Response.AddPaginationHeader(
+                new PaginationHeader(usuarios.CurrentPage, usuarios.PageSize, usuarios.TotalCount, usuarios.TotalPages));
+
+            return Ok(usuarios);
         }
 
         [HttpPost("login")]
