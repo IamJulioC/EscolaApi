@@ -141,7 +141,7 @@ namespace EscolaApi.Application.Services
                 throw new NotFoundException("Usuário não encontrado.");
             usuario.Nome = usuarioPutDTO.Nome;
 
-            if(usuarioPutDTO.Email != usuario.Email)
+            if(usuarioPutDTO.Email.ToLower() != usuario.Email.ToLower())
             {
                 var usuarioExistente = await _usuarioRepository.UserExists(usuarioPutDTO.Email);
                 if (usuarioExistente)

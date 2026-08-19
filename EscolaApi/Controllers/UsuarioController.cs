@@ -58,5 +58,13 @@ namespace EscolaApi.Controllers
             return Ok(new {message = "Usuário atualizado com sucesso!"});
 
         }
+
+        [HttpPut("senha")]
+        [Authorize]
+        public async Task<ActionResult> AlterarSenha(AlterarSenhaDTO alterarSenhaDTO)
+        {
+            await _usuarioService.AlterarSenhaAsync(User.GetUserId(), alterarSenhaDTO);
+            return Ok(new { message = "Senha alterada com sucesso!" });
+        }
     }
 }
